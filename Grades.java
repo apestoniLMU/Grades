@@ -43,7 +43,7 @@ public class Grades {
         return gradesList.length;
     }
 
-    public int average() {
+    public double average() {
         int sum = 0;
         for(int i=0; i<gradesList.length; i++) {
             sum+=gradesList[i];
@@ -62,9 +62,9 @@ public class Grades {
     public void histogram() {
         int[] groups = getGroups();
         for(int i=0; i<groups.length; i++) {
-            String line = (i*10) + "-" + ((i*10)+9) + ":";
+            String line = (i*10) + "-" + String.format("%.2f",((i*10)+9.99)) + ":";
             String s = "*";
-            line = line + (s.repeat(groups[i]*2));
+            line = line + (s.repeat(groups[i]));
             System.out.println(line);
         }
     }
@@ -73,6 +73,11 @@ public class Grades {
         int[] groups = {0,0,0,0,0,0,0,0,0,0};
         for(int i=0; i<gradesList.length; i++) {
             int index = ((int) Math.floor((((gradesList[i])/10))))-1;
+            if(index<0) {
+                index = 0;
+            } else if(index>9) {
+                index = 9;
+            }
             groups[index]+=1;
         } return groups;
     }
@@ -84,17 +89,23 @@ public class Grades {
         int[] array = new int[size];
         for(int i=0; i<array.length; i++) {
             System.out.println("Enter grade " + (i+1) + ":");
-            int grade = Integer.parseInt(scanner.nextLine());
+            String line = scanner.nextLine();
+            int grade = 0;
+            try {
+                grade = Integer.parseInt(line);
+            } catch(Exception e) {
+                System.out.println("Invalid Text. Please Input a Number");
+            }
             array[i] = grade;
         }
 
         Grades grades = new Grades(array);
         System.out.println("---------------------");
-        System.out.println(grades.highest());
-        System.out.println(grades.lowest());
-        System.out.println(grades.getNumGrades());
-        System.out.println(grades.average());
-        System.out.println(grades.numOfFailingGrades(50));
+        System.out.println("Highest:" + grades.highest());
+        System.out.println("Lowest: " + grades.lowest());
+        System.out.println("Number of Grades: " + grades.getNumGrades());
+        System.out.println("Average: " + grades.average());
+        System.out.println("Number of failing grades: " + grades.numOfFailingGrades(50));
         grades.histogram();
         scanner.close();
     }
